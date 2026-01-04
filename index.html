@@ -3,79 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>1Win Games</title>
+    <title>1Win Pro Games</title>
     <style>
+        /* --- СТИЛИ --- */
         body {
             background-color: #0f1923;
             color: white;
-            font-family: sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             margin: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
+
+        /* ШАПКА */
         .header {
-            width: 90%;
-            padding: 15px;
-            background: #1c252e;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-radius: 0 0 15px 15px;
-            margin-bottom: 20px;
+            width: 90%; padding: 15px; background: #1c252e;
+            display: flex; justify-content: space-between; align-items: center;
+            border-radius: 0 0 15px 15px; margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
-        .balance-box { color: #2ecc71; font-weight: bold; }
-        .screen { display: none; width: 100%; flex-direction: column; align-items: center; }
+        .balance-box { color: #2ecc71; font-weight: bold; font-size: 18px; text-shadow: 0 0 10px rgba(46, 204, 113, 0.3); }
+
+        .screen { display: none; width: 100%; flex-direction: column; align-items: center; animation: fadeIn 0.4s; }
         .active { display: flex; }
+
+        /* МЕНЮ */
         .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 90%; }
         .game-card {
-            background: #2c3e50; padding: 20px; border-radius: 15px;
-            text-align: center; cursor: pointer; border: 2px solid transparent;
+            background: linear-gradient(145deg, #2c3e50, #1c252e);
+            padding: 20px; border-radius: 15px; text-align: center;
+            cursor: pointer; border: 1px solid #34495e;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: 0.2s;
         }
-        .game-icon { font-size: 40px; display: block; margin-bottom: 10px; }
+        .game-card:active { transform: scale(0.95); }
+        .game-icon { font-size: 35px; display: block; margin-bottom: 10px; }
+        .game-title { font-size: 14px; font-weight: bold; color: #ecf0f1; }
+
+        /* КНОПКИ */
         .btn {
-            padding: 15px; border: none; border-radius: 10px; width: 90%;
-            font-weight: bold; font-size: 16px; cursor: pointer; color: white; margin-top: 10px;
+            padding: 18px; border: none; border-radius: 12px; width: 90%;
+            font-weight: bold; font-size: 16px; cursor: pointer; color: white;
+            margin-top: 15px; text-transform: uppercase; letter-spacing: 1px;
+            transition: 0.2s;
         }
-        .btn-green { background: #27ae60; }
-        .btn-blue { background: #0984e3; }
-        .btn-red { background: #c0392b; }
-        
-        /* Игры */
-        #mines-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin: 20px; }
-        .cell { width: 50px; height: 50px; background: #34495e; border-radius: 5px; display: flex; justify-content: center; align-items: center; font-size: 20px; }
-        .cell.safe { background: #f39c12; }
+        .btn-green { background: linear-gradient(to right, #27ae60, #2ecc71); box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4); }
+        .btn-blue { background: linear-gradient(to right, #2980b9, #3498db); box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4); }
+        .btn-red { background: #c0392b; width: auto; padding: 10px 30px; margin-top: 20px; font-size: 12px; opacity: 0.8; }
+        .btn:active { transform: scale(0.98); }
+
+        /* ИГРОВЫЕ ПОЛЯ */
+        #mines-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 20px; }
+        .cell { width: 55px; height: 55px; background: #34495e; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 24px; box-shadow: inset 0 0 5px rgba(0,0,0,0.5); }
+        .cell.safe { background: #f39c12; color: white; }
         .cell.bomb { background: #e74c3c; }
-        
-        #tower-grid { display: flex; flex-direction: column-reverse; gap: 5px; margin: 20px; }
+
+        #tower-grid { display: flex; flex-direction: column-reverse; gap: 8px; margin: 20px; }
         .tower-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .tower-cell { width: 80px; height: 40px; background: #34495e; display: flex; justify-content: center; align-items: center; border-radius: 5px; }
-        .tower-cell.active-row { background: #0984e3; }
+        .tower-cell { width: 80px; height: 45px; background: #34495e; display: flex; justify-content: center; align-items: center; border-radius: 6px; font-weight: bold;}
+        .tower-cell.active-row { background: #3498db; box-shadow: 0 0 10px #3498db; }
         .tower-cell.success { background: #2ecc71; }
         .tower-cell.fail { background: #e74c3c; }
 
-        .fishing-area { width: 300px; height: 150px; background: linear-gradient(#81ecec, #00cec9); margin: 20px; display: flex; align-items: center; justify-content: center; border-radius: 10px; color: #006266; font-weight: bold; flex-direction: column; }
+        .fishing-area { width: 300px; height: 180px; background: linear-gradient(to bottom, #81ecec, #00cec9); margin: 20px; display: flex; align-items: center; justify-content: center; border-radius: 15px; border: 3px solid white; flex-direction: column; position: relative; overflow: hidden; }
+
+        /* --- СИГНАЛЫ (ХАКЕРСКИЙ СТИЛЬ) --- */
+        .signal-box {
+            background: #101010; width: 90%; padding: 20px; border-radius: 15px;
+            border: 1px solid #333; text-align: center; margin-top: 10px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+        }
+        .slot-select {
+            background: #2c3e50; color: white; padding: 12px; width: 100%;
+            border: none; border-radius: 8px; font-size: 16px; font-weight: bold;
+            outline: none; margin-bottom: 20px;
+        }
+        .loader {
+            border: 4px solid #f3f3f3; border-top: 4px solid #3498db;
+            border-radius: 50%; width: 40px; height: 40px;
+            animation: spin 1s linear infinite; margin: 20px auto;
+        }
+        .console-text { font-family: 'Courier New', monospace; color: #2ecc71; font-size: 12px; text-align: left; height: 60px; overflow: hidden; opacity: 0.8; }
         
-        /* Модалка */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; z-index: 100; }
-        .modal-content { background: #1c252e; padding: 30px; border-radius: 15px; text-align: center; width: 80%; }
-        .reg-link { display: block; margin-top: 15px; padding: 15px; background: #2ecc71; color: white; text-decoration: none; border-radius: 10px; font-weight: bold; }
+        .signal-result { display: none; animation: zoomIn 0.3s; }
+        .res-title { color: #f1c40f; font-size: 20px; font-weight: bold; margin-bottom: 5px; text-transform: uppercase; }
+        .res-text { font-size: 15px; margin: 5px 0; color: #bdc3c7; }
+        .highlight { color: #2ecc71; font-weight: bold; font-size: 18px; }
+
+        /* МОДАЛКА */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(5px); }
+        .modal-content { background: linear-gradient(145deg, #1c252e, #151b22); padding: 30px; border-radius: 20px; text-align: center; width: 85%; border: 1px solid #3498db; box-shadow: 0 0 30px rgba(52, 152, 219, 0.3); }
+        .reg-link { display: block; margin-top: 20px; padding: 15px; background: linear-gradient(to right, #e67e22, #f39c12); color: white; text-decoration: none; border-radius: 10px; font-weight: bold; animation: pulse 1.5s infinite; text-transform: uppercase; box-shadow: 0 4px 15px rgba(230, 126, 34, 0.4); }
+        
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes zoomIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <div id="page-title">Меню</div>
+        <div id="page-title" style="font-weight:900; letter-spacing:1px;">MENU</div>
         <div class="balance-box"><span id="balance">1000</span> грн</div>
     </div>
 
     <div id="screen-menu" class="screen active">
         <div class="menu-grid">
-            <div class="game-card" onclick="openGame('mines')"><span class="game-icon">💣</span>MINES</div>
-            <div class="game-card" onclick="openGame('tower')"><span class="game-icon">🏰</span>TOWER</div>
-            <div class="game-card" onclick="openGame('fishing')"><span class="game-icon">🎣</span>FISHING</div>
+            <div class="game-card" onclick="openGame('mines')">
+                <span class="game-icon">💣</span><div class="game-title">MINES</div>
+            </div>
+            <div class="game-card" onclick="openGame('tower')">
+                <span class="game-icon">🏰</span><div class="game-title">TOWER</div>
+            </div>
+            <div class="game-card" onclick="openGame('fishing')">
+                <span class="game-icon">🎣</span><div class="game-title">FISHING</div>
+            </div>
+            <div class="game-card" onclick="openGame('signals')" style="border-color: #e67e22;">
+                <span class="game-icon">📶</span><div class="game-title" style="color:#f39c12">SIGNALS</div>
+            </div>
         </div>
+        <a href="https://1wiojq.com/casino/list?open=register&p=e3yk" class="btn btn-green" style="text-decoration:none; display:block; text-align:center; width:80%; margin-top:30px;">🎁 ЗАБРАТЬ БОНУС</a>
+    </div>
+
+    <div id="screen-signals" class="screen">
+        <h2 style="margin: 0 0 15px 0; color: #bdc3c7;">AI PREDICTOR</h2>
+        <div class="signal-box">
+            <select id="slot-select" class="slot-select">
+                <option value="dog">🐶 The Dog House</option>
+                <option value="sweet">🍭 Sweet Bonanza</option>
+                <option value="gates">⚡ Gates of Olympus</option>
+                <option value="sugar">🍬 Sugar Rush</option>
+            </select>
+
+            <div id="signal-loading" style="display:none;">
+                <div class="loader"></div>
+                <div class="console-text" id="console-log">Connecting...</div>
+            </div>
+
+            <div id="signal-res" class="signal-result">
+                <div class="res-title">🔥 SIGNAL FOUND!</div>
+                <p class="res-text">Вероятность: <span style="color:#2ecc71">98.5%</span></p>
+                <p class="res-text">Спинов до бонуса:</p>
+                <div class="highlight" id="spin-prediction">12 - 15</div>
+                <p class="res-text" style="font-size:12px; margin-top:5px; color:#7f8c8d;">Рекомендуемая ставка: 10-50 грн</p>
+            </div>
+        </div>
+        
+        <button class="btn btn-blue" id="signal-btn" onclick="startSignal()">🔍 АНАЛИЗИРОВАТЬ</button>
+        <a href="https://1wiojq.com/casino/list?open=register&p=e3yk" id="play-signal-btn" class="btn btn-green" style="display:none; text-decoration:none; text-align:center;">🎰 ИГРАТЬ СЕЙЧАС</a>
+        <button class="btn btn-red" onclick="showMenu()">НАЗАД</button>
     </div>
 
     <div id="screen-mines" class="screen">
@@ -92,8 +172,8 @@
 
     <div id="screen-fishing" class="screen">
         <div class="fishing-area">
-            <span id="fish-emoji" style="font-size:50px; display:none;">🐟</span>
-            <div id="fish-status">Нажми Забросить</div>
+            <span id="fish-emoji" style="font-size:60px; display:none;">🐟</span>
+            <div id="fish-status" style="font-weight:bold; color:#006266;">Нажми Забросить</div>
         </div>
         <button class="btn btn-blue" id="fish-btn" onclick="fishAction()">🎣 ЗАБРОСИТЬ</button>
         <button class="btn btn-red" onclick="showMenu()">НАЗАД</button>
@@ -101,15 +181,23 @@
 
     <div id="promo-modal" class="modal">
         <div class="modal-content">
-            <h2>ВЫИГРЫШ!</h2>
-            <p>Вы подняли <span id="win-amount" style="color:gold">0</span> грн</p>
-            <p style="font-size:12px; color:#ccc">Для вывода нужен аккаунт</p>
+            <h2>🏆 ВЫИГРЫШ!</h2>
+            <p style="font-size:18px;">Ваш куш: <span id="win-amount" style="color:#f1c40f; font-weight:bold;">0</span> грн</p>
+            <p style="font-size:13px; color:#95a5a6; margin: 15px 0; line-height: 1.5;">
+                Демо-лимит исчерпан.<br>Выводите деньги на карту в официальном боте.
+            </p>
             <a href="https://1wiojq.com/casino/list?open=register&p=e3yk" class="reg-link">ЗАБРАТЬ ДЕНЬГИ</a>
-            <button onclick="closeModal()" style="background:none; border:none; color:#777; margin-top:10px;">Играть дальше</button>
+            <button onclick="closeModal()" style="background:none; border:none; color:#7f8c8d; margin-top:15px; cursor:pointer; text-decoration:underline;">Вернуться в демо</button>
         </div>
     </div>
 
     <script>
+        // ССЫЛКА НА ПАРТНЕРКУ
+        const MY_REF = "https://1wiojq.com/casino/list?open=register&p=e3yk";
+        // Принудительно ставим ссылку на все кнопки
+        document.querySelectorAll('a[href="#"]').forEach(a => a.href = MY_REF);
+
+        // --- ЛОГИКА ---
         let balance = 1000;
         let minesActive=false, minesBombs=[], minesWin=0;
         let towerActive=false, towerLevel=0;
@@ -120,17 +208,24 @@
         function showMenu() {
             document.querySelectorAll('.screen').forEach(e=>e.classList.remove('active'));
             document.getElementById('screen-menu').classList.add('active');
-            minesActive=false; towerActive=false; fishStep=0;
-            document.getElementById('mines-btn').innerText="СТАВКА 100 грн";
-            document.getElementById('tower-btn').innerText="СТАВКА 100 грн";
-            document.getElementById('fish-btn').innerText="🎣 ЗАБРОСИТЬ";
+            document.getElementById('page-title').innerText = "MENU";
+            resetGames();
         }
 
         function openGame(g) {
             document.querySelectorAll('.screen').forEach(e=>e.classList.remove('active'));
             document.getElementById('screen-'+g).classList.add('active');
-            if(g==='mines') initMines();
-            if(g==='tower') initTower();
+            if(g==='mines') { document.getElementById('page-title').innerText="MINES"; initMines(); }
+            if(g==='tower') { document.getElementById('page-title').innerText="TOWER"; initTower(); }
+            if(g==='fishing') { document.getElementById('page-title').innerText="FISHING"; }
+            if(g==='signals') { document.getElementById('page-title').innerText="SIGNALS"; resetSignal(); }
+        }
+
+        function resetGames() {
+            minesActive=false; towerActive=false; fishStep=0;
+            document.getElementById('mines-btn').innerText="СТАВКА 100 грн";
+            document.getElementById('tower-btn').innerText="СТАВКА 100 грн";
+            document.getElementById('fish-btn').innerText="🎣 ЗАБРОСИТЬ";
         }
 
         function showWin(amount) {
@@ -140,7 +235,52 @@
         }
         function closeModal() { document.getElementById('promo-modal').style.display='none'; showMenu(); }
 
-        // MINES
+        // --- SIGNALS LOGIC ---
+        function resetSignal() {
+            document.getElementById('signal-loading').style.display = 'none';
+            document.getElementById('signal-res').style.display = 'none';
+            document.getElementById('signal-btn').style.display = 'block';
+            document.getElementById('play-signal-btn').style.display = 'none';
+        }
+
+        function startSignal() {
+            let btn = document.getElementById('signal-btn');
+            let loader = document.getElementById('signal-loading');
+            let log = document.getElementById('console-log');
+            
+            btn.style.display = 'none';
+            loader.style.display = 'block';
+            
+            // Имитация работы хакера
+            let logs = ["Connecting to server...", "Bypassing firewall...", "Analyzing RTP...", "Fetching hash ID...", "Success!"];
+            let i = 0;
+            log.innerText = "Initializing...";
+            
+            let interval = setInterval(() => {
+                if(i < logs.length) {
+                    log.innerText += "\n" + logs[i];
+                    log.scrollTop = log.scrollHeight;
+                    i++;
+                } else {
+                    clearInterval(interval);
+                }
+            }, 600);
+
+            // Показать результат через 3.5 сек
+            setTimeout(() => {
+                loader.style.display = 'none';
+                document.getElementById('signal-res').style.display = 'block';
+                document.getElementById('play-signal-btn').style.display = 'block';
+                
+                // Рандом предсказания
+                let min = Math.floor(Math.random() * 5) + 5; // 5-10
+                let max = min + Math.floor(Math.random() * 5) + 3; // +3-8
+                document.getElementById('spin-prediction').innerText = `${min} - ${max}`;
+                
+            }, 3500);
+        }
+
+        // --- MINES ---
         function initMines() {
             let g = document.getElementById('mines-grid'); g.innerHTML='';
             for(let i=0; i<25; i++) {
@@ -151,7 +291,7 @@
         function minesAction() {
             if(minesActive) { showWin(minesWin); } 
             else {
-                if(balance<100) return alert('Мало денег');
+                if(balance<100) return alert('Пополняем демо...');
                 balance-=100; updateBalance(); minesActive=true; minesWin=0;
                 minesBombs=[]; while(minesBombs.length<3) { let r=Math.floor(Math.random()*25); if(!minesBombs.includes(r)) minesBombs.push(r); }
                 initMines();
@@ -162,14 +302,14 @@
             if(!minesActive || c.innerText) return;
             if(minesBombs.includes(i)) {
                 c.classList.add('bomb'); c.innerText='💣'; minesActive=false;
-                document.getElementById('mines-btn').innerText="ИГРАТЬ СНОВА";
+                document.getElementById('mines-btn').innerText="ЕЩЕ РАЗ";
             } else {
                 c.classList.add('safe'); c.innerText='💎'; minesWin+=50;
                 document.getElementById('mines-btn').innerText=`ЗАБРАТЬ: ${minesWin} грн`;
             }
         }
 
-        // TOWER
+        // --- TOWER ---
         function initTower() {
             let g = document.getElementById('tower-grid'); g.innerHTML='';
             for(let r=0; r<5; r++) {
@@ -194,7 +334,7 @@
         function towerStart() {
             if(towerActive) { showWin(towerLevel*200); }
             else {
-                if(balance<100) return alert('Мало денег');
+                if(balance<100) return alert('Пополняем демо...');
                 balance-=100; updateBalance(); towerActive=true; towerLevel=0;
                 initTower();
                 document.getElementById('tower-btn').innerText="ИГРА ИДЕТ...";
@@ -208,22 +348,22 @@
             } else {
                 c.classList.add('success'); c.innerText='⭐'; towerLevel++;
                 if(towerLevel>=5) { towerActive=false; showWin(1500); }
-                else { updateTower(); document.getElementById('tower-btn').innerText=`ЗАБРАТЬ: ${towerLevel*200} грн`; }
+                else { updateTower(); document.getElementById('tower-btn').innerText=`ЗАБРАТЬ: ${towerLevel*200}`; }
             }
         }
 
-        // FISHING
+        // --- FISHING ---
         function fishAction() {
             let b=document.getElementById('fish-btn'), s=document.getElementById('fish-status'), e=document.getElementById('fish-emoji');
             if(fishStep===0) {
-                if(balance<100) return alert('Мало денег');
+                if(balance<100) return alert('Пополняем демо...');
                 balance-=100; updateBalance(); fishStep=1;
                 s.innerText="Ждем..."; b.innerText="..."; e.style.display='none';
-                setTimeout(()=>{ s.innerText="КЛЮЕТ!"; b.innerText="ТЯНИ!"; fishStep=2; }, 2000);
+                setTimeout(()=>{ s.innerText="КЛЮЕТ!"; b.innerText="ТЯНИ!"; s.style.color="#e74c3c"; fishStep=2; }, 2000);
             } else if(fishStep===2) {
                 let win = Math.random()>0.5 ? 400 : 10;
                 e.innerText = win>100 ? '🐠' : '👞'; e.style.display='block';
-                showWin(win); fishStep=0; b.innerText="ЗАБРОСИТЬ"; s.innerText="Нажми Забросить";
+                showWin(win); fishStep=0; b.innerText="ЗАБРОСИТЬ"; s.innerText="Нажми Забросить"; s.style.color="#006266";
             }
         }
     </script>
